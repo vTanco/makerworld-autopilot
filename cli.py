@@ -5,12 +5,17 @@ Autonomous system for 3D model generation, rendering, SEO listing, MakerWorld up
 multi-channel promotion, and reward point tracking.
 """
 
-import argparse
+import os
 import sys
+import argparse
 from pathlib import Path
 
-# Add project root to sys.path
+# Add project root to sys.path and auto-switch to virtual environment
 BASE_DIR = Path(__file__).resolve().parent
+venv_python = BASE_DIR / "venv" / "bin" / "python3"
+if venv_python.exists() and sys.executable != str(venv_python):
+    os.execv(str(venv_python), [str(venv_python)] + sys.argv)
+
 sys.path.insert(0, str(BASE_DIR))
 
 from config import get_config

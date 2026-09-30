@@ -61,12 +61,29 @@ class PlaywrightUploader:
             }
 
         print(f"[Uploader] Starting autonomous upload for '{title}'...")
+        stealth_args = [
+            "--disable-blink-features=AutomationControlled",
+            "--disable-infobars",
+            "--no-sandbox",
+            "--no-first-run",
+            "--no-default-browser-check"
+        ]
+
         with sync_playwright() as p:
             browser = p.chromium.launch_persistent_context(
                 user_data_dir=str(self.session_manager.profile_dir),
                 headless=self.headless,
+                args=stealth_args,
+                ignore_default_args=["--enable-automation"],
                 viewport={"width": 1400, "height": 900}
             )
+
+            # Mask navigator.webdriver
+            browser.add_init_script("""
+                Object.defineProperty(navigator, 'webdriver', {
+                    get: () => undefined
+                });
+            """)
 
             try:
                 page = browser.new_page()

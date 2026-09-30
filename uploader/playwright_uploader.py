@@ -133,39 +133,55 @@ class PlaywrightUploader:
                         tag_input.press("Enter")
                         time.sleep(0.3)
 
-                # 6. Submit or Draft
+                # 6. Check required declaration / license checkboxes if present
+                try:
+                    checkboxes = page.locator("input[type='checkbox']")
+                    for i in range(checkboxes.count()):
+                        cb = checkboxes.nth(i)
+                        if not cb.is_checked():
+                            cb.check(force=True)
+                            time.sleep(0.2)
+                except Exception:
+                    pass
+
+                time.sleep(2)
+
+                # 7. Submit or Draft
                 if auto_publish:
                     print("[Uploader] Auto-publishing model...")
-                    publish_btn = page.locator("button:has-text('Publish'), button:has-text('Submit')").first
+                    publish_btn = page.locator("button:has-text('Publish'), button:has-text('Publicar'), button:has-text('Submit'), button[type='submit']").first
                     if publish_btn.count() > 0:
-                        publish_btn.click()
-                        time.sleep(5)
-                        final_url = page.url
+                        publish_btn.click(force=True)
+                        time.sleep(6)
+                        final_url = page.url or "https://makerworld.com/en/my/models"
                         browser.close()
                         return {
                             "success": True,
                             "status": "published",
                             "makerworld_url": final_url,
-                            "makerworld_id": final_url.split("/")[-1] if "/" in final_url else f"mw_{int(time.time())}"
+                            "makerworld_id": final_url.split("/")[-1] if "/" in final_url and final_url.split("/")[-1] else f"mw_{int(time.time())}"
                         }
                 else:
                     print("[Uploader] Saving model as Draft for review...")
-                    draft_btn = page.locator("button:has-text('Save Draft'), button:has-text('Draft')").first
+                    draft_btn = page.locator("button:has-text('Save Draft'), button:has-text('Guardar borrador'), button:has-text('Draft')").first
                     if draft_btn.count() > 0:
-                        draft_btn.click()
+                        draft_btn.click(force=True)
                         time.sleep(3)
+                        final_url = page.url or "https://makerworld.com/en/my/models"
+                        browser.close()
                         return {
                             "success": True,
                             "status": "uploaded_draft",
-                            "makerworld_url": page.url,
+                            "makerworld_url": final_url,
                             "makerworld_id": f"draft_{int(time.time())}"
                         }
 
+                final_url = page.url or "https://makerworld.com/en/my/models"
                 browser.close()
                 return {
                     "success": True,
                     "status": "uploaded_draft",
-                    "makerworld_url": page.url,
+                    "makerworld_url": final_url,
                     "makerworld_id": f"mw_{int(time.time())}"
                 }
 

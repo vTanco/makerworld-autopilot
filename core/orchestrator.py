@@ -144,8 +144,8 @@ class AutopilotOrchestrator:
             print(f"[5/7 Uploader] Uploading to MakerWorld (auto_publish={auto_publish})...")
             upload_res = self.uploader.upload_model(model_data, auto_publish=auto_publish)
             model_data["status"] = upload_res.get("status", "uploaded_draft")
-            model_data["makerworld_url"] = upload_res.get("makerworld_url")
-            model_data["makerworld_id"] = upload_res.get("makerworld_id")
+            model_data["makerworld_url"] = upload_res.get("makerworld_url") or "https://makerworld.com/en/my/models"
+            model_data["makerworld_id"] = upload_res.get("makerworld_id") or model_id
             self.db.update_model_status(
                 model_id=model_id,
                 status=model_data["status"],

@@ -26,8 +26,8 @@ class RedditPoster:
     def post_model(self, model_data: Dict[str, Any]) -> Dict[str, Any]:
         """Posts to configured subreddits or stages post for manual copy-paste."""
         title = f"[Free 3MF] {model_data.get('title')}"
-        url = model_data.get("makerworld_url", "https://makerworld.com")
-        reddit_text = model_data.get("reddit_post", "").replace("{makerworld_url}", url)
+        url = model_data.get("makerworld_url") or "https://makerworld.com"
+        reddit_text = (model_data.get("reddit_post") or "").replace("{makerworld_url}", str(url))
 
         if not self.is_configured():
             return {

@@ -70,7 +70,7 @@ class SessionManager:
             f"--user-data-dir={self.profile_dir}",
             "--no-first-run",
             "--no-default-browser-check",
-            "https://makerworld.com/es"
+            "https://makerworld.com/es/sign-in/service?cb=https%3A%2F%2Fmakerworld.com%2Fmy%2Fmodels%2Fpublish"
         ]
 
         proc = subprocess.Popen(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
@@ -94,15 +94,17 @@ class SessionManager:
                             continue
 
                         page = contexts[0].pages[0] if contexts[0].pages else contexts[0].new_page()
-                        page.goto("https://makerworld.com/es", wait_until="domcontentloaded", timeout=20000)
-                        time.sleep(3)
+                        time.sleep(1)
 
-                        # Check if login button is still visible
+                        # Check if login button is still visible or still on sign-in page
                         has_login_btn = page.locator("button:has-text('Iniciar sesión'), a:has-text('Iniciar sesión'), button:has-text('Sign in')").count() > 0
-                        if has_login_btn:
+                        is_sign_in_url = "sign-in" in page.url or "login" in page.url
+
+                        if is_sign_in_url or has_login_btn:
                             print("\n❌ AÚN NO HAS INICIADO SESIÓN:")
-                            print("Todavía aparece el botón 'Iniciar sesión' en la ventana de Chrome.")
-                            print("Por favor, pulsa 'Iniciar sesión' en Chrome, identifícate y cuando ya estés dentro, vuelve aquí y pulsa Enter.")
+                            print("Todavía estás en la pantalla de inicio de sesión.")
+                            print("Por favor, introduce tu usuario/contraseña o entra con Google en la ventana de Chrome.")
+                            print("Una vez dentro de MakerWorld, vuelve aquí y pulsa Enter.")
                             browser.close()
                             continue
 

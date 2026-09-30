@@ -87,12 +87,12 @@ class PlaywrightUploader:
 
             try:
                 page = browser.new_page()
-                page.goto("https://makerworld.com/en/models/create", wait_until="domcontentloaded", timeout=30000)
+                page.goto("https://makerworld.com/es/my/models/publish", wait_until="domcontentloaded", timeout=30000)
                 time.sleep(4)
 
                 # Check if redirected to login
                 has_login_btn = page.locator("button:has-text('Iniciar sesión'), button:has-text('Sign in'), a:has-text('Iniciar sesión')").count() > 0
-                if "login" in page.url or has_login_btn:
+                if "sign-in" in page.url or "login" in page.url or has_login_btn:
                     browser.close()
                     print("[Uploader] Error: No se detecta sesión activa en MakerWorld. Inicia sesión primero con `python3 cli.py login`.")
                     return {

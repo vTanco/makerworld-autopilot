@@ -41,7 +41,7 @@ class AutopilotOrchestrator:
         self.copywriter = Copywriter(provider=self.config.get("copywriting.provider", "builtin"))
 
         # Uploader
-        self.uploader = PlaywrightUploader(headless=True)
+        self.uploader = PlaywrightUploader(headless=False)
 
         # Distribution
         self.dispatcher = DistributionDispatcher(self.config.get("distribution"), self.db)
@@ -91,18 +91,44 @@ class AutopilotOrchestrator:
         mesh.export_3mf(package_3mf_path, model_title=meta.get("title", slug))
         print(f"            Generated: {stl_path.name} & {package_3mf_path.name}")
 
-        # 3. Promotional Renders
-        print("[3/7 Renderer] Producing multi-angle studio renders...")
+        # If Bambu Studio is installed, export an official Bambu project 3MF
+        bambu_bin = Path("/Applications/BambuStudio.app/Contents/MacOS/BambuStudio")
+        if bambu_bin.exists():
+            try:
+                import subprocess
+                subprocess.run([
+                    str(bambu_bin),
+                    "--export-3mf",
+                    str(package_3mf_path.resolve()),
+                    str(stl_path.resolve())
+                ], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, timeout=20)
+                print(f"            Exported official Bambu Studio project 3MF: {package_3mf_path.name}")
+            except Exception as e:
+                print(f"            BambuStudio CLI export note: {e}")
+
+        # 3. Promotional Renders & AI Photorealistic Product Images
+        print("[3/7 Renderer] Producing multi-angle studio renders & loading AI real product photos...")
         renders_dir = self.base_dir / "output" / "renders"
         renders = self.stl_renderer.render_angles(mesh, renders_dir, slug)
         
+        # Load high-converting AI real product photos if available
+        ai_photos_dir = self.base_dir / "data" / "real_product_photos" / template
+        ai_renders = []
+        if ai_photos_dir.exists():
+            for img_file in sorted(ai_photos_dir.glob("*.jpg")):
+                ai_renders.append(str(img_file.resolve()))
+        
+        if ai_renders:
+            print(f"            Loaded {len(ai_renders)} photorealistic AI real product photos (Bambu PEI bed, in-use, handheld)!")
+            renders = ai_renders + renders
+
         # If Blender is available, create photorealistic hero shot
         if self.use_blender:
             hero_blender = renders_dir / f"{slug}_cycles_hero.png"
             if self.blender_runner.render_stl(stl_path, hero_blender):
                 renders.insert(0, str(hero_blender))
                 print("            Blender Cycles hero render generated!")
-        print(f"            Generated {len(renders)} promotional image assets.")
+        print(f"            Prepared {len(renders)} promotional and real photo image assets.")
 
         # 4. SEO Copywriting
         print("[4/7 Copywriter] Crafting high-converting title, description, and tags...")

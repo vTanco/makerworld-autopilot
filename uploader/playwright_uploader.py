@@ -6,13 +6,14 @@ setting tags and categories, and publishing or saving as draft.
 
 import time
 import os
+import re
 from pathlib import Path
 from typing import Dict, Any, Optional
 from uploader.session_manager import SessionManager
 
 
 class PlaywrightUploader:
-    def __init__(self, session_manager: Optional[SessionManager] = None, headless: bool = True):
+    def __init__(self, session_manager: Optional[SessionManager] = None, headless: bool = False):
         self.session_manager = session_manager or SessionManager()
         self.headless = headless
 
@@ -54,11 +55,12 @@ class PlaywrightUploader:
             }
 
         if not self.session_manager.has_saved_session():
-            print("[Uploader] Warning: No active login session found. Run `python3 cli.py login` first.")
-            return {
-                "success": False,
-                "error": "Authentication required. Run `python3 cli.py login` to capture your session."
-            }
+            print("[Uploader] No se detecta sesión guardada. Iniciando sesión directamente con tus credenciales...")
+            if not self.session_manager.direct_login():
+                return {
+                    "success": False,
+                    "error": "Error al iniciar sesión automáticamente en MakerWorld."
+                }
 
         print(f"[Uploader] Starting autonomous upload for '{title}'...")
         stealth_args = [
@@ -94,84 +96,207 @@ class PlaywrightUploader:
                 has_login_btn = page.locator("button:has-text('Iniciar sesión'), button:has-text('Sign in'), a:has-text('Iniciar sesión')").count() > 0
                 if "sign-in" in page.url or "login" in page.url or has_login_btn:
                     browser.close()
-                    print("[Uploader] Error: No se detecta sesión activa en MakerWorld. Inicia sesión primero con `python3 cli.py login`.")
+                    print("[Uploader] Sesión expirada o no detectada. Re-autenticando directamente...")
+                    if self.session_manager.direct_login():
+                        return self.upload_model(model_data, auto_publish=auto_publish)
                     return {
                         "success": False,
                         "status": "error_not_logged_in",
-                        "error": "Sesión no iniciada en MakerWorld. Ejecuta `python3 cli.py login`."
+                        "error": "Sesión no iniciada en MakerWorld tras reintento directo."
                     }
 
-                # 1. Attach 3D Model File (.3mf or .stl)
-                print(f"[Uploader] Attaching 3D file: {file_to_upload}")
-                file_input = page.locator("input[type='file'][accept*='.3mf'], input[type='file'][accept*='.stl'], input[type='file']").first
-                if file_input.is_visible() or file_input.count() > 0:
-                    file_input.set_input_files(str(file_to_upload))
-                    time.sleep(3)
-
-                # 2. Attach Renders / Cover Images
-                if renders:
-                    print(f"[Uploader] Attaching {len(renders)} promotional renders...")
-                    image_input = page.locator("input[type='file'][accept*='image']").first
-                    if image_input.count() > 0:
-                        existing_renders = [r for r in renders if Path(r).exists()]
-                        if existing_renders:
-                            image_input.set_input_files(existing_renders)
-                            time.sleep(2)
-
-                # 3. Fill Title
-                print(f"[Uploader] Setting title: {title}")
-                title_input = page.locator("input[placeholder*='Title'], input[placeholder*='name'], input[name='title']").first
-                if title_input.count() > 0:
-                    title_input.fill(title)
-
-                # 4. Fill Description
-                desc_input = page.locator("textarea, div[contenteditable='true']").first
-                if desc_input.count() > 0:
-                    desc_input.fill(description)
-
-                # 5. Add Tags
-                tag_input = page.locator("input[placeholder*='tag'], input[placeholder*='Tag']").first
-                if tag_input.count() > 0:
-                    for tag in tags[:8]:
-                        tag_input.fill(tag)
-                        tag_input.press("Enter")
-                        time.sleep(0.3)
-
-                # 6. Check required declaration / license checkboxes if present
+                # 1. Accept cookies if banner visible
                 try:
-                    checkboxes = page.locator("input[type='checkbox']")
-                    for i in range(checkboxes.count()):
-                        cb = checkboxes.nth(i)
-                        if not cb.is_checked():
-                            cb.check(force=True)
-                            time.sleep(0.2)
+                    accept_cookies = page.locator("button:has-text('Aceptar Todo'), button:has-text('Aceptar todo'), button:has-text('Accept All')").first
+                    if accept_cookies.is_visible():
+                        accept_cookies.click(force=True)
+                        time.sleep(1)
                 except Exception:
                     pass
 
+                # Check if we are already in Step 2 (e.g. redirected to draft edit)
+                already_in_step2 = "drafts" in page.url or page.locator("input[name='modelSource']").count() > 0
+
+                if not already_in_step2:
+                    # 2. Select Option 2: Tengo archivos STL/CAD u otros tipos de archivos 3MF
+                    print("[Uploader] Selecting option: Tengo archivos STL/CAD...")
+                    try:
+                        radio_stl = page.locator("input[type='radio'][value='false'], input[type='radio']").nth(1)
+                        radio_stl.check(force=True)
+                    except Exception:
+                        opt2 = page.locator("text='Tengo archivos STL/CAD'").first
+                        if opt2.count() > 0:
+                            opt2.click(force=True)
+                    time.sleep(2)
+
+                    # 3. Attach STL file in Step 1
+                    stl_file = stl_path if stl_path and Path(stl_path).exists() else file_to_upload
+                    print(f"[Uploader] Attaching 3D file: {stl_file}")
+                    stl_input = page.locator("input[type='file']").first
+                    if stl_input.count() > 0:
+                        stl_input.set_input_files(str(Path(stl_file).resolve()))
+                        time.sleep(4)
+
+                    # 4. Click Siguiente paso to advance to Step 2 (Model Information)
+                    print("[Uploader] Advancing to Step 2 (Información del modelo)...")
+                    next_btn = page.locator("button:has-text('Siguiente paso')").first
+                    if next_btn.count() > 0:
+                        next_btn.click(force=True)
+                        time.sleep(4)
+
+                # Wait for Step 2 elements
+                try:
+                    page.wait_for_selector("input[name='modelSource'], input[name='title']", timeout=20000)
+                except Exception:
+                    pass
+
+                # 4.1 Select Model Origin: Original
+                try:
+                    orig_radio = page.locator("input[name='modelSource'][value='original']").first
+                    if orig_radio.count() > 0:
+                        orig_radio.check(force=True)
+                        print("[Uploader] Selected Model Origin: Original")
+                        time.sleep(0.5)
+                except Exception as e:
+                    print(f"[Uploader] Origin radio notice: {e}")
+
+                # 4.2 Laser & Cut: No
+                try:
+                    laser_no = page.locator("label:has-text('No')").first
+                    if laser_no.count() > 0:
+                        laser_no.click(force=True)
+                        time.sleep(0.5)
+                except Exception:
+                    pass
+
+                # 5. Attach Cover Render and Real Photos
+                if renders:
+                    existing_renders = [str(Path(r).resolve()) for r in renders if Path(r).exists()]
+                    if existing_renders:
+                        # 5.1 Cover Render 4:3
+                        print(f"[Uploader] Attaching cover render: {existing_renders[0]}")
+                        try:
+                            file_inputs = page.locator("input[type='file']").all()
+                            if len(file_inputs) > 2:
+                                file_inputs[2].set_input_files(existing_renders[0])
+                            else:
+                                cover_inp = page.locator("input[accept*='image']").first
+                                cover_inp.set_input_files(existing_renders[0])
+                            time.sleep(3)
+                            crop_btn = page.locator("button:has-text('Enviar')").first
+                            if crop_btn.is_visible(timeout=4000):
+                                crop_btn.click(force=True)
+                                print("[Uploader] Confirmed cover image crop (Enviar)!")
+                                time.sleep(2)
+                        except Exception as e:
+                            print(f"[Uploader] Cover upload error: {e}")
+
+                        # 5.2 Real Photos (>=3 required by MakerWorld)
+                        real_photos = existing_renders[1:4]
+                        while len(real_photos) < 3:
+                            real_photos.append(existing_renders[0])
+                        print(f"[Uploader] Attaching real photos ({len(real_photos)}): {real_photos}")
+                        try:
+                            file_inputs = page.locator("input[type='file']").all()
+                            uploaded = False
+                            for fi in file_inputs[3:]:
+                                p_text = fi.evaluate("el => el.parentElement?.innerText || ''")
+                                if 'Añadir foto' in p_text or 'Fotos reales' in p_text:
+                                    fi.set_input_files(real_photos)
+                                    uploaded = True
+                                    print("[Uploader] Real photos attached successfully!")
+                                    break
+                            if not uploaded and len(file_inputs) > 5:
+                                file_inputs[5].set_input_files(real_photos)
+                            time.sleep(3)
+                        except Exception as e:
+                            print(f"[Uploader] Real photos upload notice: {e}")
+
+                # 6. Fill Model Title
+                print(f"[Uploader] Setting title: {title}")
+                title_input = page.locator("input[name='title']").first
+                if title_input.count() > 0:
+                    title_input.fill(title[:50])
+                    time.sleep(0.5)
+
+                # 7. Fill Category
+                print("[Uploader] Setting category...")
+                try:
+                    cat_inp = page.locator(".modelCategory input").first
+                    if cat_inp.count() > 0:
+                        cat_inp.click()
+                        time.sleep(1)
+                        cat_opt = page.locator(".MuiAutocomplete-popper li, .MuiAutocomplete-option").nth(1)
+                        cat_opt.click()
+                        print("[Uploader] Category selected successfully!")
+                        time.sleep(1)
+                except Exception as e:
+                    print(f"[Uploader] Category notice: {e}")
+
+                # 8. Add Tags
+                print("[Uploader] Adding tags...")
+                try:
+                    cat_inputs = page.locator(".MuiAutocomplete-root input").all()
+                    tag_input = cat_inputs[1] if len(cat_inputs) > 1 else page.locator("input[placeholder*='Enter'], input[placeholder*='etiquetas'], input[placeholder*='Etiquetas']").first
+                    if tag_input:
+                        for tag in tags[:5]:
+                            tag_input.fill(tag)
+                            tag_input.press("Enter")
+                            time.sleep(0.4)
+                except Exception as e:
+                    print(f"[Uploader] Tags notice: {e}")
+
+                # 9. Fill Description in CKEditor
+                print("[Uploader] Adding description...")
+                try:
+                    desc_input = page.locator("div.ck-content").first
+                    if desc_input.count() > 0:
+                        clean_desc = description[:500] if description else "Functional 3D printed model."
+                        desc_input.fill(clean_desc)
+                        time.sleep(0.5)
+                except Exception as e:
+                    print(f"[Uploader] Description notice: {e}")
+
                 time.sleep(2)
 
-                # 7. Submit or Draft
+                # 10. Submit or Draft
                 if auto_publish:
-                    print("[Uploader] Auto-publishing model...")
-                    publish_btn = page.locator("button:has-text('Publish'), button:has-text('Publicar'), button:has-text('Submit'), button[type='submit']").first
+                    print("[Uploader] Auto-publishing model live...")
+                    publish_btn = page.locator("button:has-text('Publicar')").last
                     if publish_btn.count() > 0:
                         publish_btn.click(force=True)
-                        time.sleep(6)
-                        final_url = page.url or "https://makerworld.com/en/my/models"
+                        time.sleep(4)
+                        try:
+                            modal_btn = page.locator("button:has-text('Confirmar'), button:has-text('Aceptar'), button:has-text('Publicar de todos modos')").first
+                            if modal_btn.is_visible(timeout=4000):
+                                print("[Uploader] Confirming publish modal...")
+                                modal_btn.click(force=True)
+                        except Exception:
+                            pass
+                        time.sleep(10)
+                        try:
+                            page.screenshot(path="output/published_result.png")
+                        except Exception:
+                            pass
+                        final_url = page.url or ""
+                        print(f"[Uploader] Published! Redirected to: {final_url}")
                         browser.close()
+                        match = re.search(r'/models/(\d+)', final_url)
+                        mw_id = match.group(1) if match else (final_url.split("/")[-1] if "/" in final_url else f"mw_{int(time.time())}")
+                        live_url = final_url if ("models" in final_url or "verifying" in final_url or "@user" in final_url) else f"https://makerworld.com/es/models/{mw_id}"
                         return {
                             "success": True,
                             "status": "published",
-                            "makerworld_url": final_url,
-                            "makerworld_id": final_url.split("/")[-1] if "/" in final_url and final_url.split("/")[-1] else f"mw_{int(time.time())}"
+                            "makerworld_url": live_url,
+                            "makerworld_id": mw_id
                         }
                 else:
                     print("[Uploader] Saving model as Draft for review...")
-                    draft_btn = page.locator("button:has-text('Save Draft'), button:has-text('Guardar borrador'), button:has-text('Draft')").first
+                    draft_btn = page.locator("button:has-text('Guardar en borrador')").first
                     if draft_btn.count() > 0:
                         draft_btn.click(force=True)
-                        time.sleep(3)
-                        final_url = page.url or "https://makerworld.com/en/my/models"
+                        time.sleep(4)
+                        final_url = page.url or "https://makerworld.com/es/my/models"
                         browser.close()
                         return {
                             "success": True,

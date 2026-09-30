@@ -11,6 +11,8 @@ from typing import Any, Dict
 DEFAULT_CONFIG: Dict[str, Any] = {
     "makerworld": {
         "user_id": "",
+        "email": "",
+        "password": "",
         "auto_publish": False,
         "session_dir": "data/browser_profile",
         "default_license": "Standard Digital File License",
@@ -140,6 +142,10 @@ class Config:
         """Override configuration with environment variables if present."""
         if os.getenv("MAKERWORLD_USER_ID"):
             self.data["makerworld"]["user_id"] = os.getenv("MAKERWORLD_USER_ID")
+        if os.getenv("MAKERWORLD_EMAIL"):
+            self.data["makerworld"]["email"] = os.getenv("MAKERWORLD_EMAIL")
+        if os.getenv("MAKERWORLD_PASSWORD"):
+            self.data["makerworld"]["password"] = os.getenv("MAKERWORLD_PASSWORD")
         if os.getenv("DISCORD_WEBHOOK_URL"):
             self.data["distribution"]["webhooks"]["discord_webhook_url"] = os.getenv("DISCORD_WEBHOOK_URL")
         if os.getenv("TELEGRAM_BOT_TOKEN"):

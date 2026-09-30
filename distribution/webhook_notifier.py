@@ -7,6 +7,7 @@ import json
 import urllib.request
 import urllib.parse
 import urllib.error
+import ssl
 from typing import Dict, Any, Optional
 
 
@@ -62,17 +63,18 @@ class WebhookNotifier:
         payload = {
             "chat_id": self.telegram_chat_id,
             "text": message,
-            "parse_mode": "Markdown"
+            "parse_mode": "HTML"
         }
 
         try:
+            ssl_ctx = ssl._create_unverified_context()
             req = urllib.request.Request(
                 url,
                 data=json.dumps(payload).encode("utf-8"),
                 headers={"Content-Type": "application/json"},
                 method="POST"
             )
-            with urllib.request.urlopen(req, timeout=8):
+            with urllib.request.urlopen(req, context=ssl_ctx, timeout=10):
                 return True
         except Exception as e:
             print(f"[Webhook] Telegram notification error: {e}")
@@ -88,8 +90,9 @@ class WebhookNotifier:
         url = f"https://api.callmebot.com/whatsapp.php?phone={clean_phone}&text={encoded_msg}&apikey={self.whatsapp_apikey}"
 
         try:
+            ssl_ctx = ssl._create_unverified_context()
             req = urllib.request.Request(url, headers={"User-Agent": "MakerWorldAutopilot/1.0"})
-            with urllib.request.urlopen(req, timeout=10) as resp:
+            with urllib.request.urlopen(req, context=ssl_ctx, timeout=10) as resp:
                 return resp.status == 200
         except Exception as e:
             print(f"[Webhook] WhatsApp notification error: {e}")
@@ -108,7 +111,17 @@ class WebhookNotifier:
         self.send_discord_alert(title, desc, fields, color=0x2ECC71)
         
         # 2. Telegram
-        self.send_telegram_alert(f"🚀 *New Model Prepared:*\n*{model_data.get('title')}*\nStatus: `{model_data.get('status')}`\nURL: {url_link}")
+        mw_status = "Publicado en vivo 🎉" if model_data.get('status') == 'published' else "Guardado en MakerWorld 📝"
+        tg_text = (
+            f"🚀 <b>¡Nuevo Modelo en MakerWorld!</b>\n\n"
+            f"📦 <b>Título:</b> {model_data.get('title')}\n"
+            f"🏷️ <b>Categoría:</b> {model_data.get('category')}\n"
+            f"📊 <b>Estado:</b> <code>{mw_status}</code>\n"
+            f"📐 <b>Dimensiones:</b> <code>{model_data.get('dimensions_mm', 'Optimizado')}</code>\n\n"
+            f"🔗 <b>Enlace:</b> <a href=\"{url_link}\">{url_link}</a>\n\n"
+            f"🤖 <i>Generado y publicado por MakerWorld Autopilot</i>"
+        )
+        self.send_telegram_alert(tg_text)
         
         # 3. WhatsApp
         wa_msg = f"🚀 *MakerWorld Autopilot*\nNuevo modelo procesado:\n*{model_data.get('title')}*\nEstado: {model_data.get('status')}\n🔗 {url_link}"

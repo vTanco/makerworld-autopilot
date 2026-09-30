@@ -87,14 +87,18 @@ class PlaywrightUploader:
 
             try:
                 page = browser.new_page()
-                page.goto("https://makerworld.com/en/models/create", wait_until="networkidle", timeout=45000)
+                page.goto("https://makerworld.com/en/models/create", wait_until="domcontentloaded", timeout=30000)
+                time.sleep(4)
 
                 # Check if redirected to login
-                if "login" in page.url:
+                has_login_btn = page.locator("button:has-text('Iniciar sesión'), button:has-text('Sign in'), a:has-text('Iniciar sesión')").count() > 0
+                if "login" in page.url or has_login_btn:
                     browser.close()
+                    print("[Uploader] Error: No se detecta sesión activa en MakerWorld. Inicia sesión primero con `python3 cli.py login`.")
                     return {
                         "success": False,
-                        "error": "Session expired. Please run `python3 cli.py login` again."
+                        "status": "error_not_logged_in",
+                        "error": "Sesión no iniciada en MakerWorld. Ejecuta `python3 cli.py login`."
                     }
 
                 # 1. Attach 3D Model File (.3mf or .stl)
@@ -176,6 +180,10 @@ class PlaywrightUploader:
                             "makerworld_id": f"draft_{int(time.time())}"
                         }
 
+                try:
+                    page.screenshot(path="output/upload_state_debug.png")
+                except Exception:
+                    pass
                 final_url = page.url or "https://makerworld.com/en/my/models"
                 browser.close()
                 return {
@@ -186,6 +194,10 @@ class PlaywrightUploader:
                 }
 
             except Exception as e:
+                try:
+                    page.screenshot(path="output/upload_error_debug.png")
+                except Exception:
+                    pass
                 browser.close()
                 return {
                     "success": False,

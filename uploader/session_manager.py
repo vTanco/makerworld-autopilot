@@ -5,6 +5,7 @@ Equipped with Cloudflare Turnstile anti-bot bypass & Real Chrome launch support.
 """
 
 import os
+import re
 import sys
 import time
 import subprocess
@@ -26,6 +27,23 @@ class SessionManager:
         """Checks if a saved browser session state exists."""
         return self.state_file.exists() and self.state_file.stat().st_size > 100
 
+    def _update_user_id_in_config(self, user_id: str) -> None:
+        """Automatically updates makerworld.user_id in config.yaml with the real user ID."""
+        config_file = Path(__file__).resolve().parent.parent / "config.yaml"
+        if not config_file.exists():
+            return
+        try:
+            content = config_file.read_text(encoding="utf-8")
+            content = re.sub(
+                r'user_id:\s*["\'].*?["\']',
+                f'user_id: "{user_id}"',
+                content
+            )
+            config_file.write_text(content, encoding="utf-8")
+            print(f"⚙️ Configuración actualizada: makerworld.user_id = \"{user_id}\"")
+        except Exception as e:
+            print(f"[SessionManager] Warning updating config.yaml: {e}")
+
     def launch_real_chrome_login(self) -> bool:
         """
         Launches the official Google Chrome app on macOS with remote debugging.
@@ -38,11 +56,12 @@ class SessionManager:
 
         port = 9222
         print("\n=======================================================")
-        print("  🌐 LAUNCHING REAL GOOGLE CHROME (CLOUDFLARE BYPASS)")
+        print("  🌐 INICIANDO GOOGLE CHROME OFICIAL (SIN BLOQUEOS)")
         print("=======================================================")
-        print("Opening genuine Google Chrome window...")
-        print("1. Log into MakerWorld (using Google, Email/Password, or Bambu Lab).")
-        print("2. Once logged in and you see your avatar, return here and press ENTER.\n")
+        print("Se ha abierto Google Chrome en tu pantalla.")
+        print("1. En la ventana de Chrome que se ha abierto, pulsa 'Iniciar sesión'.")
+        print("2. Entra con tu cuenta de Google o de Bambu Lab.")
+        print("3. IMPORTANTE: NO pulses Enter en esta terminal hasta que veas tu foto de perfil en MakerWorld.\n")
 
         # Launch real Chrome in isolated profile with remote debugging
         cmd = [
@@ -51,32 +70,69 @@ class SessionManager:
             f"--user-data-dir={self.profile_dir}",
             "--no-first-run",
             "--no-default-browser-check",
-            "https://makerworld.com/en"
+            "https://makerworld.com/es"
         ]
 
         proc = subprocess.Popen(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-        time.sleep(2)
+        time.sleep(3)
 
-        try:
-            input(">>> Press [ENTER] in this terminal AFTER you have logged in: ")
-        except EOFError:
-            pass
+        while True:
+            try:
+                input(">>> Pulsa [ENTER] ÚNICAMENTE después de haber completado el login en la ventana de Chrome: ")
+            except EOFError:
+                pass
 
-        # Now connect via Playwright to extract the authenticated storage state
-        try:
-            from playwright.sync_api import sync_playwright
-            with sync_playwright() as p:
-                try:
-                    browser = p.chromium.connect_over_cdp(f"http://localhost:{port}")
-                    contexts = browser.contexts
-                    if contexts:
+            # Connect via Playwright to verify that the user is ACTUALLY logged in
+            try:
+                from playwright.sync_api import sync_playwright
+                with sync_playwright() as p:
+                    try:
+                        browser = p.chromium.connect_over_cdp(f"http://localhost:{port}")
+                        contexts = browser.contexts
+                        if not contexts:
+                            print("⚠️ No se detecta ventana abierta de Chrome. Vuelve a intentarlo.")
+                            continue
+
+                        page = contexts[0].pages[0] if contexts[0].pages else contexts[0].new_page()
+                        page.goto("https://makerworld.com/es", wait_until="domcontentloaded", timeout=20000)
+                        time.sleep(3)
+
+                        # Check if login button is still visible
+                        has_login_btn = page.locator("button:has-text('Iniciar sesión'), a:has-text('Iniciar sesión'), button:has-text('Sign in')").count() > 0
+                        if has_login_btn:
+                            print("\n❌ AÚN NO HAS INICIADO SESIÓN:")
+                            print("Todavía aparece el botón 'Iniciar sesión' en la ventana de Chrome.")
+                            print("Por favor, pulsa 'Iniciar sesión' en Chrome, identifícate y cuando ya estés dentro, vuelve aquí y pulsa Enter.")
+                            browser.close()
+                            continue
+
+                        # Extract real user ID from profile links
+                        user_id = None
+                        links = page.locator("a[href*='/u/']").all()
+                        for l in links:
+                            href = l.get_attribute("href") or ""
+                            parts = [pt for pt in href.split("/") if pt]
+                            if "u" in parts:
+                                idx = parts.index("u")
+                                if idx + 1 < len(parts):
+                                    candidate = parts[idx + 1].split("?")[0]
+                                    if candidate:
+                                        user_id = candidate
+                                        break
+
+                        # Capture cookies & storage state
                         contexts[0].storage_state(path=str(self.state_file))
-                        print(f"✅ Session and cookies successfully captured to {self.state_file}!")
-                    browser.close()
-                except Exception as e:
-                    print(f"[SessionManager] Note: Direct cookie extraction via CDP: {e}")
-        except ImportError:
-            pass
+                        print(f"\n✅ ¡Sesión VERIFICADA y guardada con éxito en {self.state_file}!")
+                        if user_id:
+                            print(f"👤 Tu ID de usuario real de MakerWorld es: {user_id}")
+                            self._update_user_id_in_config(user_id)
+                        browser.close()
+                        break
+                    except Exception as e:
+                        print(f"[SessionManager] Error verificando sesión vía CDP: {e}")
+                        break
+            except ImportError:
+                break
 
         # Terminate the interactive Chrome process
         try:
@@ -87,62 +143,5 @@ class SessionManager:
         return True
 
     def launch_interactive_login(self) -> bool:
-        """
-        Launches interactive login. Uses Real Chrome if available to bypass Cloudflare/Google blocks,
-        falling back to Playwright Chromium with stealth anti-automation flags.
-        """
-        chrome_bin = Path("/Applications/Google Chrome.app/Contents/MacOS/Google Chrome")
-        if chrome_bin.exists():
-            return self.launch_real_chrome_login()
-
-        # Fallback to Stealth Playwright Chromium
-        try:
-            from playwright.sync_api import sync_playwright
-        except ImportError:
-            print("[SessionManager] Error: Playwright is not installed.")
-            return False
-
-        print("\n=======================================================")
-        print("  MAKERWORLD STEALTH AUTHENTICATION")
-        print("=======================================================")
-        print("Opening stealth browser. Please log into your MakerWorld account.")
-        print("Tip: If using Email/Password, Cloudflare will pass automatically.")
-        print("Once logged in, return here and press ENTER.\n")
-
-        stealth_args = [
-            "--disable-blink-features=AutomationControlled",
-            "--disable-infobars",
-            "--no-sandbox",
-            "--no-first-run",
-            "--no-default-browser-check"
-        ]
-
-        with sync_playwright() as p:
-            browser = p.chromium.launch_persistent_context(
-                user_data_dir=str(self.profile_dir),
-                headless=False,
-                args=stealth_args,
-                ignore_default_args=["--enable-automation"],
-                viewport={"width": 1280, "height": 800}
-            )
-
-            # Mask navigator.webdriver
-            browser.add_init_script("""
-                Object.defineProperty(navigator, 'webdriver', {
-                    get: () => undefined
-                });
-            """)
-
-            page = browser.new_page()
-            page.goto("https://makerworld.com/en")
-
-            try:
-                input(">>> Press [ENTER] once you have completed login in the browser window: ")
-            except EOFError:
-                pass
-
-            browser.storage_state(path=str(self.state_file))
-            browser.close()
-
-        print(f"✅ Session successfully saved to {self.state_file}!")
-        return True
+        """Launches interactive login via real Google Chrome."""
+        return self.launch_real_chrome_login()

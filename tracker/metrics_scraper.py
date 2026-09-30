@@ -36,11 +36,11 @@ class MetricsScraper:
                     "note": "Loaded from local database history."
                 }
             return {
-                "downloads": 1420,
-                "prints": 680,
-                "boosts": 42,
-                "points": 1850,
-                "note": "Demo profile stats. Set `makerworld.user_id` in config.yaml to track live profile."
+                "downloads": 0,
+                "prints": 0,
+                "boosts": 0,
+                "points": 0,
+                "note": "Sin estadísticas previas. Conecta tu perfil en config.yaml para sincronizar."
             }
 
         url = f"https://makerworld.com/en/u/{self.user_id}"

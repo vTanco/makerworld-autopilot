@@ -18,6 +18,8 @@ class DistributionDispatcher:
             discord_url=webhooks.get("discord_webhook_url"),
             telegram_token=webhooks.get("telegram_bot_token"),
             telegram_chat_id=webhooks.get("telegram_chat_id"),
+            whatsapp_phone=webhooks.get("whatsapp_phone"),
+            whatsapp_apikey=webhooks.get("whatsapp_apikey"),
         )
         self.reddit = RedditPoster(config.get("reddit", {}))
 

@@ -47,6 +47,8 @@ DEFAULT_CONFIG: Dict[str, Any] = {
             "discord_webhook_url": "",
             "telegram_bot_token": "",
             "telegram_chat_id": "",
+            "whatsapp_phone": "",
+            "whatsapp_apikey": "",
         },
         "reddit": {
             "enabled": False,
@@ -144,6 +146,10 @@ class Config:
             self.data["distribution"]["webhooks"]["telegram_bot_token"] = os.getenv("TELEGRAM_BOT_TOKEN")
         if os.getenv("TELEGRAM_CHAT_ID"):
             self.data["distribution"]["webhooks"]["telegram_chat_id"] = os.getenv("TELEGRAM_CHAT_ID")
+        if os.getenv("WHATSAPP_PHONE"):
+            self.data["distribution"]["webhooks"]["whatsapp_phone"] = os.getenv("WHATSAPP_PHONE")
+        if os.getenv("WHATSAPP_APIKEY"):
+            self.data["distribution"]["webhooks"]["whatsapp_apikey"] = os.getenv("WHATSAPP_APIKEY")
         if os.getenv("REDDIT_CLIENT_ID"):
             self.data["distribution"]["reddit"]["client_id"] = os.getenv("REDDIT_CLIENT_ID")
             self.data["distribution"]["reddit"]["enabled"] = True

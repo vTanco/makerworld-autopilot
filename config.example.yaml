@@ -51,6 +51,8 @@ distribution:
     discord_webhook_url: ""
     telegram_bot_token: ""
     telegram_chat_id: ""
+    whatsapp_phone: ""
+    whatsapp_apikey: ""
   
   # Social autoposting (leave empty to disable)
   reddit:

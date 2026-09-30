@@ -1,19 +1,29 @@
 """
-Webhook Notification Client (Discord & Telegram).
+Webhook Notification Client (Discord, Telegram & WhatsApp).
 Sends rich embedded alerts when models are generated, uploaded, or points are earned.
 """
 
 import json
 import urllib.request
+import urllib.parse
 import urllib.error
 from typing import Dict, Any, Optional
 
 
 class WebhookNotifier:
-    def __init__(self, discord_url: Optional[str] = None, telegram_token: Optional[str] = None, telegram_chat_id: Optional[str] = None):
+    def __init__(
+        self,
+        discord_url: Optional[str] = None,
+        telegram_token: Optional[str] = None,
+        telegram_chat_id: Optional[str] = None,
+        whatsapp_phone: Optional[str] = None,
+        whatsapp_apikey: Optional[str] = None,
+    ):
         self.discord_url = discord_url or ""
         self.telegram_token = telegram_token or ""
         self.telegram_chat_id = telegram_chat_id or ""
+        self.whatsapp_phone = whatsapp_phone or ""
+        self.whatsapp_apikey = whatsapp_apikey or ""
 
     def send_discord_alert(self, title: str, description: str, fields: list = None, color: int = 0x2E86AB) -> bool:
         if not self.discord_url:
@@ -68,12 +78,38 @@ class WebhookNotifier:
             print(f"[Webhook] Telegram notification error: {e}")
             return False
 
+    def send_whatsapp_alert(self, message: str) -> bool:
+        """Sends WhatsApp notification using the CallMeBot free API."""
+        if not self.whatsapp_phone or not self.whatsapp_apikey:
+            return False
+
+        clean_phone = self.whatsapp_phone.replace("+", "").replace(" ", "").replace("-", "")
+        encoded_msg = urllib.parse.quote(message)
+        url = f"https://api.callmebot.com/whatsapp.php?phone={clean_phone}&text={encoded_msg}&apikey={self.whatsapp_apikey}"
+
+        try:
+            req = urllib.request.Request(url, headers={"User-Agent": "MakerWorldAutopilot/1.0"})
+            with urllib.request.urlopen(req, timeout=10) as resp:
+                return resp.status == 200
+        except Exception as e:
+            print(f"[Webhook] WhatsApp notification error: {e}")
+            return False
+
     def notify_model_ready(self, model_data: Dict[str, Any]) -> None:
         title = f"🚀 New 3D Model Prepared: {model_data.get('title')}"
-        desc = f"**Status:** {model_data.get('status')}\n**Category:** {model_data.get('category')}\n**URL:** {model_data.get('makerworld_url', 'Pending upload')}"
+        url_link = model_data.get("makerworld_url") or "https://makerworld.com/en/my/models"
+        desc = f"**Status:** {model_data.get('status')}\n**Category:** {model_data.get('category')}\n**URL:** {url_link}"
         fields = [
             {"name": "Dimensions", "value": model_data.get("dimensions_mm", "N/A"), "inline": True},
             {"name": "Print Profile", "value": "Bambu 3MF Generated", "inline": True},
         ]
+        
+        # 1. Discord
         self.send_discord_alert(title, desc, fields, color=0x2ECC71)
-        self.send_telegram_alert(f"🚀 *New Model Prepared:*\n*{model_data.get('title')}*\nStatus: `{model_data.get('status')}`\nURL: {model_data.get('makerworld_url')}")
+        
+        # 2. Telegram
+        self.send_telegram_alert(f"🚀 *New Model Prepared:*\n*{model_data.get('title')}*\nStatus: `{model_data.get('status')}`\nURL: {url_link}")
+        
+        # 3. WhatsApp
+        wa_msg = f"🚀 *MakerWorld Autopilot*\nNuevo modelo procesado:\n*{model_data.get('title')}*\nEstado: {model_data.get('status')}\n🔗 {url_link}"
+        self.send_whatsapp_alert(wa_msg)

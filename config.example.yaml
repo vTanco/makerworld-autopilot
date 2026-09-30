@@ -1,0 +1,75 @@
+# MakerWorld Autopilot Configuration
+
+makerworld:
+  # Your MakerWorld user ID (e.g. from makerworld.com/en/u/<user_id>)
+  user_id: "YOUR_MAKERWORLD_USER_ID"
+  # Set to true to automatically publish designs; false saves as Draft on MakerWorld
+  auto_publish: false
+  # Directory where browser authentication state and cookies are stored
+  session_dir: "data/browser_profile"
+  # Default license: "CC BY-NC-SA 4.0", "CC BY 4.0", "Standard Digital File License"
+  default_license: "Standard Digital File License"
+  # Category fallback if AI classification is not certain
+  default_category: "Household/Organization"
+
+generation:
+  # Mode: "procedural" (100% free, parametric CAD) or "ai_3d" (Meshy / Tripo3D API)
+  mode: "procedural"
+  # Enabled procedural templates
+  templates:
+    - "gridfinity"
+    - "phone_stand"
+    - "cable_holder"
+    - "modular_bracket"
+  # Slicing preset configuration
+  slicing:
+    filament_type: "PLA"
+    layer_height: 0.20
+    infill_percentage: 15
+    brim_type: "auto"
+
+rendering:
+  # Renderer engine: "internal" (fast Python-native preview) or "blender" (photorealistic)
+  engine: "internal"
+  # Path to blender binary (if engine: blender)
+  blender_path: "/Applications/Blender.app/Contents/MacOS/Blender"
+  # Render resolutions (width x height)
+  width: 1200
+  height: 900
+  # Number of viewing angles to export
+  angles: 4
+
+copywriting:
+  # Provider: "builtin" (rule-based prompt engineer, zero cost), "gemini", or "openai"
+  provider: "builtin"
+  # Target language for listings (en-US is recommended for maximum international reach)
+  language: "en"
+
+distribution:
+  # Instant notifications for approvals, new uploads, and rewards
+  webhooks:
+    discord_webhook_url: ""
+    telegram_bot_token: ""
+    telegram_chat_id: ""
+  
+  # Social autoposting (leave empty to disable)
+  reddit:
+    enabled: false
+    client_id: ""
+    client_secret: ""
+    username: ""
+    password: ""
+    subreddits: ["3Dprinting", "BambuLab", "functionalprint"]
+
+  pinterest:
+    enabled: false
+    access_token: ""
+    board_id: ""
+
+scheduler:
+  # How often to check for trends and generate new models (in hours)
+  interval_hours: 24
+  # Safe rate limits to protect account health
+  max_uploads_per_day: 1
+  # Daily tracking frequency (hours)
+  metrics_check_interval: 6

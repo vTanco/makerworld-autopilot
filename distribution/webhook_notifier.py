@@ -1,0 +1,79 @@
+"""
+Webhook Notification Client (Discord & Telegram).
+Sends rich embedded alerts when models are generated, uploaded, or points are earned.
+"""
+
+import json
+import urllib.request
+import urllib.error
+from typing import Dict, Any, Optional
+
+
+class WebhookNotifier:
+    def __init__(self, discord_url: Optional[str] = None, telegram_token: Optional[str] = None, telegram_chat_id: Optional[str] = None):
+        self.discord_url = discord_url or ""
+        self.telegram_token = telegram_token or ""
+        self.telegram_chat_id = telegram_chat_id or ""
+
+    def send_discord_alert(self, title: str, description: str, fields: list = None, color: int = 0x2E86AB) -> bool:
+        if not self.discord_url:
+            return False
+
+        payload = {
+            "username": "MakerWorld Autopilot",
+            "avatar_url": "https://makerworld.bblmw.com/static/image/logo.png",
+            "embeds": [{
+                "title": title,
+                "description": description,
+                "color": color,
+                "fields": fields or [],
+                "footer": {"text": "MakerWorld Autonomous Engine • 100% Autopilot"}
+            }]
+        }
+
+        try:
+            req = urllib.request.Request(
+                self.discord_url,
+                data=json.dumps(payload).encode("utf-8"),
+                headers={"Content-Type": "application/json", "User-Agent": "MakerWorldAutopilot/1.0"},
+                method="POST"
+            )
+            with urllib.request.urlopen(req, timeout=8):
+                return True
+        except Exception as e:
+            print(f"[Webhook] Discord notification error: {e}")
+            return False
+
+    def send_telegram_alert(self, message: str) -> bool:
+        if not self.telegram_token or not self.telegram_chat_id:
+            return False
+
+        url = f"https://api.telegram.org/bot{self.telegram_token}/sendMessage"
+        payload = {
+            "chat_id": self.telegram_chat_id,
+            "text": message,
+            "parse_mode": "Markdown"
+        }
+
+        try:
+            req = urllib.request.Request(
+                url,
+                data=json.dumps(payload).encode("utf-8"),
+                headers={"Content-Type": "application/json"},
+                method="POST"
+            )
+            with urllib.request.urlopen(req, timeout=8):
+                return True
+        except Exception as e:
+            print(f"[Webhook] Telegram notification error: {e}")
+            return False
+
+    def notify_model_ready(self, model_data: Dict[str, Any]) -> None:
+        title = f"🚀 New 3D Model Prepared: {model_data.get('title')}"
+        desc = f"**Status:** {model_data.get('status')}\n**Category:** {model_data.get('category')}\n**URL:** {model_data.get('makerworld_url', 'Pending upload')}"
+        fields = [
+            {"name": "Dimensions", "value": model_data.get("dimensions_mm", "N/A"), "inline": True},
+            {"name": "Print Profile", "value": "Bambu 3MF Generated", "inline": True},
+        ]
+        self.send_discord_alert(title, desc, fields, color=0x2ECC71)
+        self.send_telegram_alert(f"🚀 *New Model Prepared:*\n*{model_data.get('title')}*\nStatus: `{model_data.get('status')}`\nURL: {model_data.get('makerworld_url')}")

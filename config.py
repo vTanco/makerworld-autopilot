@@ -63,9 +63,9 @@ DEFAULT_CONFIG: Dict[str, Any] = {
         },
     },
     "scheduler": {
-        "interval_hours": 24,
-        "max_uploads_per_day": 1,
-        "metrics_check_interval": 6,
+        "interval_hours": 6,
+        "max_uploads_per_day": 4,
+        "metrics_check_interval": 3,
     },
 }
 

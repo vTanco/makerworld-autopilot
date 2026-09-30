@@ -101,9 +101,13 @@ python3 cli.py run --skip-upload
 ```
 
 ### Start 24/7 Autopilot Scheduler
-Runs autonomous cycles periodically (e.g. once every 24 hours):
+Runs autonomous cycles periodically (default: every 6 hours = 4 models/day):
 ```bash
-python3 cli.py autopilot --interval-hours 24
+# Default (every 6 hours)
+python3 cli.py autopilot --publish
+
+# Custom interval (e.g. every 4 hours or every 12 hours)
+python3 cli.py autopilot --interval-hours 4 --publish
 ```
 
 ### Discover Trending Opportunities

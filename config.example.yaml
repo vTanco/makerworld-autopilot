@@ -68,8 +68,8 @@ distribution:
 
 scheduler:
   # How often to check for trends and generate new models (in hours)
-  interval_hours: 24
-  # Safe rate limits to protect account health
-  max_uploads_per_day: 1
+  interval_hours: 6
+  # Safe rate limits to protect account health (4 models/day optimal cadence)
+  max_uploads_per_day: 4
   # Daily tracking frequency (hours)
-  metrics_check_interval: 6
+  metrics_check_interval: 3

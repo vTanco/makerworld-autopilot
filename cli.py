@@ -119,7 +119,7 @@ def main():
 
     # Command: autopilot
     p_auto = subparsers.add_parser("autopilot", help="Start continuous 24/7 autonomous loop")
-    p_auto.add_argument("--interval-hours", type=float, default=24.0, help="Hours between generation cycles (default: 24)")
+    p_auto.add_argument("--interval-hours", type=float, default=6.0, help="Hours between generation cycles (default: 6)")
     p_auto.add_argument("--publish", action="store_true", help="Auto-publish live to MakerWorld")
     p_auto.set_defaults(func=cmd_autopilot)
 

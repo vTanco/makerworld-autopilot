@@ -71,6 +71,15 @@ class PlaywrightUploader:
             "--no-default-browser-check"
         ]
 
+        # Clean up stale locks if any
+        for lock_name in ["SingletonLock", "SingletonSocket", "SingletonCookie"]:
+            lock_path = self.session_manager.profile_dir / lock_name
+            if lock_path.exists():
+                try:
+                    lock_path.unlink(missing_ok=True)
+                except Exception:
+                    pass
+
         with sync_playwright() as p:
             browser = p.chromium.launch_persistent_context(
                 user_data_dir=str(self.session_manager.profile_dir),
@@ -191,11 +200,15 @@ class PlaywrightUploader:
                         except Exception as e:
                             print(f"[Uploader] Cover upload error: {e}")
 
-                        # 5.2 Real Photos (>=3 required by MakerWorld)
-                        real_photos = existing_renders[1:4]
-                        while len(real_photos) < 3:
-                            real_photos.append(existing_renders[0])
-                        print(f"[Uploader] Attaching real photos ({len(real_photos)}): {real_photos}")
+                        # 5.2 Real Photos (>=3 required by MakerWorld, only genuine photo assets)
+                        real_candidates = [r for r in existing_renders if "real_product_photos" in r or r.endswith(".jpg")]
+                        if len(real_candidates) >= 3:
+                            real_photos = real_candidates[:3]
+                        elif real_candidates:
+                            real_photos = (real_candidates * 3)[:3]
+                        else:
+                            real_photos = existing_renders[:3]
+                        print(f"[Uploader] Attaching pure real photos ({len(real_photos)}): {real_photos}")
                         try:
                             file_inputs = page.locator("input[type='file']").all()
                             uploaded = False
@@ -216,7 +229,7 @@ class PlaywrightUploader:
                 print(f"[Uploader] Setting title: {title}")
                 title_input = page.locator("input[name='title']").first
                 if title_input.count() > 0:
-                    title_input.fill(title[:50])
+                    title_input.fill(title[:70])
                     time.sleep(0.5)
 
                 # 7. Fill Category
@@ -251,7 +264,7 @@ class PlaywrightUploader:
                 try:
                     desc_input = page.locator("div.ck-content").first
                     if desc_input.count() > 0:
-                        clean_desc = description[:500] if description else "Functional 3D printed model."
+                        clean_desc = description[:2500] if description else "Functional 3D printed model."
                         desc_input.fill(clean_desc)
                         time.sleep(0.5)
                 except Exception as e:

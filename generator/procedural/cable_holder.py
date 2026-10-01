@@ -21,7 +21,7 @@ class CableHolderGenerator(BaseGenerator):
     def generate(self, params: Dict[str, Any] = None) -> Tuple[Mesh, Dict[str, Any]]:
         params = params or {}
         num_slots = int(params.get("slots", 3))
-        slot_width = 4.5  # standard diameter for USB-C / braided cables
+        slot_width = float(params.get("slot_width", 4.5))  # standard diameter for USB-C / braided cables
         slot_spacing = 12.0
         
         depth = 22.0

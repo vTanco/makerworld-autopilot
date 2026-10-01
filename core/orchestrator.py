@@ -53,7 +53,11 @@ class AutopilotOrchestrator:
         self,
         template_name: Optional[str] = None,
         auto_publish: Optional[bool] = None,
-        skip_upload: bool = False
+        skip_upload: bool = False,
+        custom_params: Optional[Dict[str, Any]] = None,
+        custom_title: Optional[str] = None,
+        custom_desc_highlight: Optional[str] = None,
+        custom_tags: Optional[list] = None
     ) -> Dict[str, Any]:
         """
         Executes a complete autonomous production cycle.
@@ -65,12 +69,12 @@ class AutopilotOrchestrator:
         # 1. Trend & Opportunity Selection
         if template_name:
             template = template_name.lower()
-            params = {}
-            print(f"[1/7 Scout] Manual template selected: '{template}'")
+            params = custom_params or {}
+            print(f"[1/7 Scout] Manual template selected: '{template}' with params: {params}")
         else:
             opportunity = self.trend_analyzer.pick_next_opportunity()
             template = opportunity["template"]
-            params = opportunity["params"]
+            params = custom_params or opportunity["params"]
             print(f"[1/7 Scout] Selected trending opportunity: '{template}'")
             print(f"            Reason: {opportunity.get('reason')}")
 
@@ -78,6 +82,13 @@ class AutopilotOrchestrator:
         print(f"[2/7 Generator] Procedural CAD generation for '{template}' with params: {params}...")
         generator = get_generator(template)
         mesh, meta = generator.generate(params)
+
+        if custom_title:
+            meta["title"] = custom_title
+        if custom_desc_highlight:
+            meta["description_highlight"] = custom_desc_highlight
+        if custom_tags:
+            meta["tags"] = custom_tags
 
         timestamp_id = int(time.time())
         slug = f"{template}_{timestamp_id}"

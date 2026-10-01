@@ -108,11 +108,13 @@ class TrendAnalyzer:
         if not self.db:
             return []
         try:
-            rows = self.db.conn.execute(
-                "SELECT template_used FROM models ORDER BY id DESC LIMIT ?", (limit,)
-            ).fetchall()
-            return [r[0] for r in rows if r and r[0]]
-        except Exception:
+            with self.db._get_connection() as conn:
+                rows = conn.execute(
+                    "SELECT template_used FROM models ORDER BY id DESC LIMIT ?", (limit,)
+                ).fetchall()
+                return [r[0] for r in rows if r and r[0]]
+        except Exception as e:
+            print(f"[TrendAnalyzer] DB fetch notice: {e}")
             return []
 
     def pick_next_opportunity(self) -> Dict[str, Any]:

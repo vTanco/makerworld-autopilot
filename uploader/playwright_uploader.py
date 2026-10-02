@@ -264,9 +264,19 @@ class PlaywrightUploader:
                 try:
                     desc_input = page.locator("div.ck-content").first
                     if desc_input.count() > 0:
-                        clean_desc = description[:2500] if description else "Functional 3D printed model."
-                        desc_input.fill(clean_desc)
-                        time.sleep(0.5)
+                        clean_desc = description[:4000] if description else "Functional 3D printed model."
+                        # Escape backticks and backslashes for JS string
+                        escaped = clean_desc.replace('\\', '\\\\').replace('`', '\\`').replace('${', '\\${')
+                        page.evaluate(f"""
+                            const editor = document.querySelector('.ck-content');
+                            if (editor) {{
+                                editor.innerHTML = `{escaped}`;
+                                // Trigger input event so CKEditor registers the change
+                                editor.dispatchEvent(new Event('input', {{ bubbles: true }}));
+                                editor.dispatchEvent(new Event('change', {{ bubbles: true }}));
+                            }}
+                        """)
+                        time.sleep(1)
                 except Exception as e:
                     print(f"[Uploader] Description notice: {e}")
 

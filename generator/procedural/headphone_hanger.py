@@ -68,4 +68,9 @@ class HeadphoneHangerGenerator(BaseGenerator):
         meta["assembly_steps"] = "5. Mount under your desk using a command strip or screw."
         meta["material_tip"] = "Print with higher infill for heavier headphones."
         meta["weight"] = 40.0
+        highlight = meta.get("description_highlight", "")
+        es_highlight = highlight.replace("model", "modelo").replace("design", "diseño").replace("Perfect for", "Perfecto para").replace("Keep your", "Mantén tu").replace("Organize", "Organiza")
+        if es_highlight == highlight:
+            es_highlight = "Gran modelo funcional para organizar tu espacio."
+        meta["description_highlight_es"] = es_highlight
         return mesh, meta

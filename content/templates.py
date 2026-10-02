@@ -5,59 +5,72 @@ Optimized for search rankings, user retention, and maximizing Boost token conver
 
 from typing import Dict, Any
 
-MAKERWORLD_DESCRIPTION_TEMPLATE = """# {title}
+MAKERWORLD_DESCRIPTION_TEMPLATE = """<h2>{title}</h2>
+<p>{description_highlight}</p>
 
-{description_highlight}
+<h3>📐 Specifications</h3>
+<ul>
+<li><strong>Dimensions:</strong> {dimensions}</li>
+<li><strong>Weight:</strong> ~{weight}g (PLA)</li>
+<li><strong>Parts:</strong> 1 piece, no assembly</li>
+<li><strong>Supports:</strong> None required</li>
+</ul>
 
----
+<h3>⚙️ Print Settings</h3>
+<ul>
+<li><strong>Printer:</strong> Bambu Lab A1 / A1 mini / P1S / X1C</li>
+<li><strong>Material:</strong> PLA, PLA+, PETG</li>
+<li><strong>Layer Height:</strong> {layer_height}mm</li>
+<li><strong>Infill:</strong> {infill}</li>
+<li><strong>Supports:</strong> None needed ✨</li>
+<li><strong>Build Plate:</strong> Textured PEI recommended</li>
+<li><strong>Print Time:</strong> ~{print_time}</li>
+</ul>
 
-## 📐 Technical Specifications
-| Parameter | Value |
-|---|---|
-| Dimensions | {dimensions} |
-| Estimated Weight | {weight}g (PLA) |
-| Number of Parts | 1 (single piece) |
-| Tolerances | ±0.2mm |
-| Support Required | No |
+<h3>📦 What's Included</h3>
+<ul>
+<li>✅ Optimized STL file</li>
+<li>✅ Bambu Studio 3MF with pre-configured print profile</li>
+<li>✅ Ready to print — just hit Print!</li>
+<li>✅ Real photos of the printed model</li>
+</ul>
 
-## ⚙️ Recommended Print Settings
-| Setting | Value |
-|---|---|
-| Printer | Bambu Lab A1 / A1 mini / P1S / X1C |
-| Material | PLA, PLA+, Matte PLA, PETG |
-| Layer Height | {layer_height}mm |
-| Wall Loops | 3-4 |
-| Infill | {infill} |
-| Supports | None required |
-| Build Plate | Textured PEI (recommended) |
-| Estimated Time | {print_time} |
+<h3>🛠️ How to Print</h3>
+<p>1. <strong>Download</strong> the .3mf and open in Bambu Studio<br>
+2. <strong>Slice</strong> — settings are pre-configured<br>
+3. <strong>Print</strong> — no supports needed<br>
+4. <strong>Remove</strong> from build plate<br>
+{assembly_steps}</p>
 
-## 📦 What's Included
-- ✅ Optimized STL file
-- ✅ Bambu Studio 3MF project with pre-configured print profile
-- ✅ Slice settings pre-loaded (just hit Print!)
-- ✅ Real photos of printed model
+<h3>💡 Pro Tips</h3>
+<p>• Textured PEI plate at 60°C for best adhesion<br>
+• For PETG: increase bed temp to 75°C<br>
+• {material_tip}</p>
 
-## 🛠️ Print & Assembly Guide
-1. **Download** the .3mf file and open in Bambu Studio
-2. **Slice** — all settings are pre-configured for optimal results
-3. **Print** — no supports, no brim needed
-4. **Remove** from build plate and inspect
-{assembly_steps}
+<h3>🚀 Like & Boost!</h3>
+<p>If this model was useful, please give it a <strong>Like</strong> and a <strong>🚀 Boost</strong>! It helps independent creators keep sharing free designs. Share your makes in the comments!</p>
 
-## 💡 Pro Tips
-- Use textured PEI plate at 60°C for best adhesion
-- For PETG, increase bed temp to 75°C
-- Standard speed recommended for first layer
-- {material_tip}
+<hr>
 
-## 🔗 More from this Creator
-Check out my other functional prints for desk organization, 3D printer upgrades, and workshop tools!
+<h3>🇪🇸 Español</h3>
+<p>{description_highlight_es}</p>
 
-## 🚀 Support the Community!
-If you found this model useful, please **Like** and **🚀 Boost**!
-Boost tokens help independent creators release more high-quality prints.
-Share photos of your makes in the comments! Happy printing!
+<h3>📐 Especificaciones</h3>
+<ul>
+<li><strong>Dimensiones:</strong> {dimensions}</li>
+<li><strong>Peso:</strong> ~{weight}g (PLA)</li>
+<li><strong>Piezas:</strong> 1 pieza, sin ensamblaje</li>
+<li><strong>Soportes:</strong> No necesarios</li>
+</ul>
+
+<h3>🛠️ Cómo imprimir</h3>
+<p>1. <strong>Descarga</strong> el archivo .3mf y ábrelo en Bambu Studio<br>
+2. <strong>Slice</strong> — la configuración ya viene incluida<br>
+3. <strong>Imprime</strong> — sin soportes<br>
+4. <strong>Retira</strong> de la cama de impresión</p>
+
+<h3>🚀 ¡Apoya a la comunidad!</h3>
+<p>Si te ha resultado útil, dale <strong>Like</strong> y <strong>🚀 Boost</strong>. ¡Comparte fotos de tus impresiones en los comentarios!</p>
 """
 
 REDDIT_POST_TEMPLATE = """[Free STL] Designed a {title} for my desk setup!

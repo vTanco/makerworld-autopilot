@@ -146,6 +146,7 @@ class AutopilotOrchestrator:
 
         # 4. SEO Copywriting
         print("[4/7 Copywriter] Crafting high-converting title, description, and tags...")
+        meta["template_used"] = template  # So copywriter can look up localized descriptions
         listing = self.copywriter.generate_listing(meta)
         print(f"            Title: {listing['title']}")
         print(f"            Tags: {', '.join(listing['tags'][:5])}...")

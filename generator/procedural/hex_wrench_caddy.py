@@ -56,4 +56,9 @@ class HexWrenchCaddyGenerator(BaseGenerator):
         meta["assembly_steps"] = "5. Place your hex wrenches in the sized slots."
         meta["material_tip"] = "High contrast filament helps you see the tool sizes better."
         meta["weight"] = 30.0
+        highlight = meta.get("description_highlight", "")
+        es_highlight = highlight.replace("model", "modelo").replace("design", "diseño").replace("Perfect for", "Perfecto para").replace("Keep your", "Mantén tu").replace("Organize", "Organiza")
+        if es_highlight == highlight:
+            es_highlight = "Gran modelo funcional para organizar tu espacio."
+        meta["description_highlight_es"] = es_highlight
         return mesh, meta

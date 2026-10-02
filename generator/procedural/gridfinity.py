@@ -76,4 +76,9 @@ class GridfinityGenerator(BaseGenerator):
         meta["assembly_steps"] = "5. Snap into any standard Gridfinity baseplate."
         meta["material_tip"] = "PLA is perfectly fine, but PETG is better for workshop environments."
         meta["weight"] = 25.0
+        highlight = meta.get("description_highlight", "")
+        es_highlight = highlight.replace("model", "modelo").replace("design", "diseño").replace("Perfect for", "Perfecto para").replace("Keep your", "Mantén tu").replace("Organize", "Organiza")
+        if es_highlight == highlight:
+            es_highlight = "Gran modelo funcional para organizar tu espacio."
+        meta["description_highlight_es"] = es_highlight
         return mesh, meta

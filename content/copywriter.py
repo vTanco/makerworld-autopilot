@@ -42,6 +42,30 @@ class Copywriter:
         assembly_steps = meta.get("assembly_steps", "5. Enjoy your new print!")
         material_tip = meta.get("material_tip", "Dry your filament for best results.")
 
+        # High-quality Spanish description highlights per template
+        _ES_HIGHLIGHTS = {
+            "gridfinity": "Bandeja modular de almacenamiento compatible con el sistema Gridfinity. Perfecta para organizar tornillos, componentes electrónicos y herramientas pequeñas. Imprime sin soportes en menos de 1 hora.",
+            "phone_stand": "Soporte ergonómico para móvil con ángulo de visualización optimizado para videollamadas, FaceTime y notificaciones. Diseño minimalista que combina con cualquier escritorio.",
+            "cable_holder": "Clip organizador de cables para escritorio. Mantén tus cables USB-C, HDMI y de carga siempre ordenados y accesibles. Se adhiere al borde del escritorio sin herramientas.",
+            "modular_bracket": "Escuadra de refuerzo estructural de alta resistencia con nervadura triangular central. Ideal para proyectos de bricolaje, estanterías y talleres.",
+            "bambu_poop_chute": "Deflector de purga para impresoras Bambu Lab. Redirige los residuos de filamento directamente a la papelera. Compatible con A1, A1 mini, P1S y X1C.",
+            "sd_usb_caddy": "Organizador compacto de escritorio para tarjetas SD, MicroSD y memorias USB. Mantén tu equipo de fotografía y accesorios de impresión 3D siempre ordenados.",
+            "headphone_hanger": "Gancho minimalista para auriculares bajo escritorio. Cuna de 38mm que protege la diadema. Mantén tu setup gaming limpio y organizado.",
+            "hex_wrench_caddy": "Organizador de llaves Allen y herramientas de mantenimiento para Bambu Lab. Llaves hex de 1.5mm a 4.0mm, boquillas de repuesto y espátula siempre a mano.",
+            "ptfe_filament_clip": "Clip de filamento PTFE de doble propósito. Sujeta el extremo del filamento en el carrete y guía los tubos Bowden. Impresión rápida en menos de 20 minutos.",
+            "watch_dock": "Base de carga elegante para Apple Watch y smartwatches compatibles. Base circular con peso para estabilidad, pilar cónico y canal trasero para el cable.",
+            "controller_stand": "Soporte universal para mandos de videojuegos. Compatible con PS5 DualSense, Xbox Series, Nintendo Switch Pro y Joy-Con. Incluye paso de cable de carga.",
+            "pen_holder": "Porta bolígrafos y estiletes cilíndrico de diseño. Perfecto para Apple Pencil, rotuladores y bolígrafos de escritorio. Acabado profesional en PLA mate.",
+            "monitor_riser": "Elevador ergonómico para monitor y portátil. Eleva la pantalla al nivel de los ojos y libera espacio debajo para guardar el teclado. Incluye gestión de cables.",
+            "tool_mount": "Organizador de herramientas de pared con ranuras cilíndricas para destornilladores, alicates y marcadores. Incluye agujeros de montaje y tira para etiquetas.",
+        }
+        template_name = meta.get("template_used", "")
+        highlight_es = meta.get("description_highlight_es")
+        if not highlight_es or highlight_es == "Gran modelo funcional para organizar tu espacio.":
+            highlight_es = _ES_HIGHLIGHTS.get(template_name, 
+                f"Modelo funcional impreso en 3D de alta calidad. Diseñado para imprimir sin soportes en impresoras Bambu Lab. Descarga el archivo .3mf con perfil de impresión preconfigurado."
+            )
+
         # Try AI enrichment if configured
         if self.provider == "gemini" and os.getenv("GEMINI_API_KEY"):
             try:
@@ -55,6 +79,7 @@ class Copywriter:
         description = MAKERWORLD_DESCRIPTION_TEMPLATE.format(
             title=title,
             description_highlight=highlight,
+            description_highlight_es=highlight_es,
             dimensions=dimensions,
             weight=weight,
             layer_height=layer_height,

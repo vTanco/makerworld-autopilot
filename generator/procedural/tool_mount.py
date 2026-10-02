@@ -129,5 +129,9 @@ class ToolMountGenerator(BaseGenerator):
                 "Prints flat without supports on standard 256mm Bambu Lab build plates."
             )
         }
-
+        highlight = meta.get("description_highlight", "")
+        es_highlight = highlight.replace("model", "modelo").replace("design", "diseño").replace("Perfect for", "Perfecto para").replace("Keep your", "Mantén tu").replace("Organize", "Organiza")
+        if es_highlight == highlight:
+            es_highlight = "Gran modelo funcional para organizar tu espacio."
+        meta["description_highlight_es"] = es_highlight
         return mesh, meta

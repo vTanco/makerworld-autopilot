@@ -58,4 +58,9 @@ class PTFEFilamentClipGenerator(BaseGenerator):
         meta["assembly_steps"] = "5. Clip onto your filament spool or PTFE tube."
         meta["material_tip"] = "PETG provides the necessary flex to clip without breaking."
         meta["weight"] = 5.0
+        highlight = meta.get("description_highlight", "")
+        es_highlight = highlight.replace("model", "modelo").replace("design", "diseño").replace("Perfect for", "Perfecto para").replace("Keep your", "Mantén tu").replace("Organize", "Organiza")
+        if es_highlight == highlight:
+            es_highlight = "Gran modelo funcional para organizar tu espacio."
+        meta["description_highlight_es"] = es_highlight
         return mesh, meta

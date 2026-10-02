@@ -65,4 +65,9 @@ class ModularBracketGenerator(BaseGenerator):
         meta["assembly_steps"] = "5. Secure with M3 screws where necessary."
         meta["material_tip"] = "PETG or ABS recommended for structural integrity."
         meta["weight"] = 20.0
+        highlight = meta.get("description_highlight", "")
+        es_highlight = highlight.replace("model", "modelo").replace("design", "diseño").replace("Perfect for", "Perfecto para").replace("Keep your", "Mantén tu").replace("Organize", "Organiza")
+        if es_highlight == highlight:
+            es_highlight = "Gran modelo funcional para organizar tu espacio."
+        meta["description_highlight_es"] = es_highlight
         return mesh, meta

@@ -275,18 +275,34 @@ class PlaywrightUploader:
                 # 10. Submit or Draft
                 if auto_publish:
                     print("[Uploader] Auto-publishing model live...")
+                    page.evaluate("window.scrollTo(0, document.body.scrollHeight)")
+                    time.sleep(2)
                     publish_btn = page.locator("button:has-text('Publicar')").last
+                    
+                    # Wait up to 10s if button is disabled due to image upload processing
+                    for _ in range(10):
+                        if publish_btn.count() > 0 and publish_btn.is_enabled():
+                            break
+                        time.sleep(1)
+
                     if publish_btn.count() > 0:
+                        publish_btn.scroll_into_view_if_needed()
                         publish_btn.click(force=True)
                         time.sleep(4)
                         try:
-                            modal_btn = page.locator("button:has-text('Confirmar'), button:has-text('Aceptar'), button:has-text('Publicar de todos modos')").first
-                            if modal_btn.is_visible(timeout=4000):
+                            modal_btn = page.locator("button:has-text('Confirmar'), button:has-text('Aceptar'), button:has-text('Publicar de todos modos'), button:has-text('Publish anyway')").first
+                            if modal_btn.is_visible(timeout=5000):
                                 print("[Uploader] Confirming publish modal...")
                                 modal_btn.click(force=True)
                         except Exception:
                             pass
-                        time.sleep(10)
+
+                        # Wait for redirect after publishing
+                        for _ in range(15):
+                            time.sleep(1)
+                            if "publish" not in (page.url or ""):
+                                break
+
                         try:
                             page.screenshot(path="output/published_result.png")
                         except Exception:

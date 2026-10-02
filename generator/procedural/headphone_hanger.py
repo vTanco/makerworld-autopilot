@@ -65,4 +65,7 @@ class HeadphoneHangerGenerator(BaseGenerator):
             "description_highlight": "Sturdy under-desk headphone mount with a wide 38mm curved cradle that protects headband cushioning. Includes a front retention lip to keep audio cables neatly coiled."
         }
 
+        meta["assembly_steps"] = "5. Mount under your desk using a command strip or screw."
+        meta["material_tip"] = "Print with higher infill for heavier headphones."
+        meta["weight"] = 40.0
         return mesh, meta

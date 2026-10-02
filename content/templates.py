@@ -11,31 +11,53 @@ MAKERWORLD_DESCRIPTION_TEMPLATE = """# {title}
 
 ---
 
-### ✨ Features
-- **Zero-Support Printing:** Engineered from the ground up to print cleanly without any supports or brim.
-- **Dimensional Accuracy:** Tuned tolerances for seamless fit and finish.
-- **Fast & Efficient:** Optimized geometry minimizes travel moves and filament waste.
-- **Dimensions:** `{dimensions}`
-
----
-
-### ⚙️ Recommended Print Settings
+## 📐 Technical Specifications
 | Parameter | Value |
 |---|---|
-| **Printer** | Bambu Lab A1 / A1 mini / P1P / P1S / X1C |
-| **Material** | PLA, PLA+, Matte PLA, or PETG |
-| **Layer Height** | `{layer_height}` mm |
-| **Wall Loops** | 3 - 4 walls |
-| **Infill** | `{infill}` |
-| **Supports** | **None required** |
-| **Build Plate** | Textured PEI plate recommended |
+| Dimensions | {dimensions} |
+| Estimated Weight | {weight}g (PLA) |
+| Number of Parts | 1 (single piece) |
+| Tolerances | ±0.2mm |
+| Support Required | No |
 
----
+## ⚙️ Recommended Print Settings
+| Setting | Value |
+|---|---|
+| Printer | Bambu Lab A1 / A1 mini / P1S / X1C |
+| Material | PLA, PLA+, Matte PLA, PETG |
+| Layer Height | {layer_height}mm |
+| Wall Loops | 3-4 |
+| Infill | {infill} |
+| Supports | None required |
+| Build Plate | Textured PEI (recommended) |
+| Estimated Time | {print_time} |
 
-### 🚀 Community & Boosts
-If you found this model useful, please consider giving it a **Like** and dropping a **🚀 Boost**! Boost tokens help independent creators continue releasing high-quality functional prints for free.
+## 📦 What's Included
+- ✅ Optimized STL file
+- ✅ Bambu Studio 3MF project with pre-configured print profile
+- ✅ Slice settings pre-loaded (just hit Print!)
+- ✅ Real photos of printed model
 
-Feel free to post photos of your makes in the comments section! Happy printing!
+## 🛠️ Print & Assembly Guide
+1. **Download** the .3mf file and open in Bambu Studio
+2. **Slice** — all settings are pre-configured for optimal results
+3. **Print** — no supports, no brim needed
+4. **Remove** from build plate and inspect
+{assembly_steps}
+
+## 💡 Pro Tips
+- Use textured PEI plate at 60°C for best adhesion
+- For PETG, increase bed temp to 75°C
+- Standard speed recommended for first layer
+- {material_tip}
+
+## 🔗 More from this Creator
+Check out my other functional prints for desk organization, 3D printer upgrades, and workshop tools!
+
+## 🚀 Support the Community!
+If you found this model useful, please **Like** and **🚀 Boost**!
+Boost tokens help independent creators release more high-quality prints.
+Share photos of your makes in the comments! Happy printing!
 """
 
 REDDIT_POST_TEMPLATE = """[Free STL] Designed a {title} for my desk setup!

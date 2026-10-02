@@ -57,4 +57,7 @@ class CableHolderGenerator(BaseGenerator):
             "description_highlight": f"Clean {num_slots}-slot desktop cable organizer. Keeps charging and data cables neatly positioned without falling off your desk. Flat base ready for double-sided tape."
         }
 
+        meta["assembly_steps"] = "5. Use double-sided tape to attach to your desk."
+        meta["material_tip"] = "TPU can be used for a flexible grip, otherwise PLA works great."
+        meta["weight"] = 10.0
         return mesh, meta

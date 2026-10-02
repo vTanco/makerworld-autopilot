@@ -73,4 +73,7 @@ class GridfinityGenerator(BaseGenerator):
             "description_highlight": f"Standard Gridfinity {gx}x{gy} bin compatible with all Gridfinity baseplates. Designed for zero-support printing with maximum structural durability."
         }
 
+        meta["assembly_steps"] = "5. Snap into any standard Gridfinity baseplate."
+        meta["material_tip"] = "PLA is perfectly fine, but PETG is better for workshop environments."
+        meta["weight"] = 25.0
         return mesh, meta

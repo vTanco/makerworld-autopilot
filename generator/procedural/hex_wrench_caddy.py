@@ -53,4 +53,7 @@ class HexWrenchCaddyGenerator(BaseGenerator):
             "description_highlight": "Organized desktop caddy for your official Bambu Lab hex keys (1.5mm to 4.0mm), spare nozzles, and maintenance scraper. Keep your printer workstation neat and ready."
         }
 
+        meta["assembly_steps"] = "5. Place your hex wrenches in the sized slots."
+        meta["material_tip"] = "High contrast filament helps you see the tool sizes better."
+        meta["weight"] = 30.0
         return mesh, meta

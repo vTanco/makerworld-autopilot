@@ -57,4 +57,7 @@ class SDUsbCaddyGenerator(BaseGenerator):
             "description_highlight": "Clean desktop media organizer designed to hold 4 full-sized SD cards, 6 MicroSD cards, and 2 USB flash drives. Solid stable footprint that prints in under 45 minutes without supports."
         }
 
+        meta["assembly_steps"] = "5. Insert SD and USB drives into their respective slots."
+        meta["material_tip"] = "Matte PLA looks great and hides layer lines."
+        meta["weight"] = 15.0
         return mesh, meta

@@ -62,4 +62,7 @@ class ModularBracketGenerator(BaseGenerator):
             "description_highlight": f"Heavy-duty 90-degree corner bracket featuring a reinforced center gusset to resist shear loads. Optimized for countersunk M4/M5 screws."
         }
 
+        meta["assembly_steps"] = "5. Secure with M3 screws where necessary."
+        meta["material_tip"] = "PETG or ABS recommended for structural integrity."
+        meta["weight"] = 20.0
         return mesh, meta

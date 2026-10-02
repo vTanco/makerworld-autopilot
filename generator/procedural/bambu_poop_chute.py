@@ -68,4 +68,7 @@ class BambuPoopChuteGenerator(BaseGenerator):
             "description_highlight": "High-efficiency Bambu Lab purge chute deflector. Fits snugly against the purge chute to cleanly direct extruded filament waste into your trash bin or collector bucket. 100% support-free print."
         }
 
+        meta["assembly_steps"] = "5. Attach to the back of your Bambu Lab printer using the built-in magnets or snap fit."
+        meta["material_tip"] = "Use PLA+ to handle the occasional warm purge."
+        meta["weight"] = 80.0
         return mesh, meta

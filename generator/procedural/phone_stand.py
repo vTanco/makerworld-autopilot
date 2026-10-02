@@ -64,4 +64,7 @@ class PhoneStandGenerator(BaseGenerator):
             "description_highlight": "Ergonomically tilted desk stand with integrated cable pass-through for charging. Prints without any supports on Bambu Lab A1, P1P, P1S, and X1C."
         }
 
+        meta["assembly_steps"] = "5. Place on a flat surface and rest your phone horizontally or vertically."
+        meta["material_tip"] = "Add rubber feet to the bottom to prevent sliding."
+        meta["weight"] = 35.0
         return mesh, meta

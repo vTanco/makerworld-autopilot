@@ -94,12 +94,15 @@ class AutopilotOrchestrator:
         slug = f"{template}_{timestamp_id}"
         model_id = f"mw_{slug}"
 
+        from generator.bambu_profile import BambuProfileInjector
         models_dir = self.base_dir / "models"
         stl_path = models_dir / f"{slug}.stl"
         package_3mf_path = models_dir / f"{slug}.3mf"
 
         mesh.export_stl_binary(stl_path)
-        mesh.export_3mf(package_3mf_path, model_title=meta.get("title", slug))
+        # Inject Bambu Studio print profile metadata directly into 3mf package
+        injector = BambuProfileInjector()
+        injector.create_bambu_3mf(mesh, str(package_3mf_path), model_title=meta.get("title", slug))
         print(f"            Generated: {stl_path.name} & {package_3mf_path.name}")
 
         # If Bambu Studio is installed, export an official Bambu project 3MF

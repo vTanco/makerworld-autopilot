@@ -55,4 +55,7 @@ class PTFEFilamentClipGenerator(BaseGenerator):
             "description_highlight": "High-tension dual-purpose clip. Clamps securely onto 1.75mm filament spool rims to lock loose ends in place, or snaps onto 4mm PTFE bowden tubes to prevent rubbing."
         }
 
+        meta["assembly_steps"] = "5. Clip onto your filament spool or PTFE tube."
+        meta["material_tip"] = "PETG provides the necessary flex to clip without breaking."
+        meta["weight"] = 5.0
         return mesh, meta

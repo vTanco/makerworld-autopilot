@@ -293,6 +293,187 @@ class TrendAnalyzer:
                 "reason": "Dedicated Nintendo Switch accessory search query with constant global volume.",
                 "highlight": "Engineered cradle contour tailored to the official Nintendo Switch Joy-Con grip controller.",
                 "tags": ["nintendo switch", "joy-con stand", "switch pro", "gaming dock", "display stand", "bambulab"]
+            },
+            # ===== BATCH 3: 20 BRAND NEW HIGH-ENGAGEMENT OPPORTUNITIES =====
+            {
+                "template": "controller_stand",
+                "title": "Xbox Series X/S & Elite Controller Display Stand (115mm)",
+                "params": {"width": 115.0, "depth": 85.0, "height": 70.0},
+                "category": "Household/Office",
+                "reason": "Dedicated Xbox Series and Elite controller search volume on MakerWorld.",
+                "highlight": "Custom-profiled gaming stand engineered specifically for Xbox Wireless and Xbox Elite Series 2 controllers with rear cable pass-through.",
+                "tags": ["xbox controller", "xbox series x", "elite controller", "gaming stand", "desk setup", "bambulab", "functional print"]
+            },
+            {
+                "template": "watch_dock",
+                "title": "Nightstand Apple Watch Ultra & Series 9 Floating Charging Stand (70mm)",
+                "params": {"base_diameter": 70.0, "stand_height": 65.0},
+                "category": "Household/Office",
+                "reason": "Apple Watch Ultra users search for wider weighted charging bases that prevent tipping.",
+                "highlight": "Heavy-base floating nightstand charging dock sized for larger Apple Watch Ultra (49mm) and standard 41/45mm models.",
+                "tags": ["apple watch ultra", "series 9", "charging dock", "nightstand", "smartwatch stand", "bambulab", "functional print"]
+            },
+            {
+                "template": "pen_holder",
+                "title": "Modern Minimalist Single Luxury Pen & Stylus Desk Stand (45mm)",
+                "params": {"diameter": 45.0, "height": 60.0, "slots": 1},
+                "category": "Household/Office",
+                "reason": "Single luxury pen holders are a top minimalist desk trend on Pinterest and Reddit.",
+                "highlight": "Weighted single-pen desk podium with 14° angled insertion cone. Showcases your Apple Pencil, Wacom stylus, or fountain pen.",
+                "tags": ["single pen stand", "apple pencil", "luxury pen", "desk accessory", "minimalist", "bambulab", "functional print"]
+            },
+            {
+                "template": "monitor_riser",
+                "title": "Ultrawide Monitor & Studio Desk Shelf Stand (320mm, Heavy Duty)",
+                "params": {"width": 320.0, "depth": 150.0, "height": 70.0, "leg_style": "pillars"},
+                "category": "Household/Office",
+                "reason": "Ultrawide displays need wider 300mm+ risers with reinforced pillar legs.",
+                "highlight": "Extra-wide 320mm monitor riser built for ultrawide 34-49 inch curved screens and studio audio monitors.",
+                "tags": ["ultrawide monitor", "desk shelf", "monitor riser", "studio monitor", "cable management", "bambulab", "functional print"]
+            },
+            {
+                "template": "tool_mount",
+                "title": "Heavy-Duty 8-Slot Pliers & Wire Cutters Wall Organizer (220mm)",
+                "params": {"width": 220.0, "height": 45.0, "depth": 35.0, "num_slots": 8, "slot_diameter": 14.0},
+                "category": "Household/Tools",
+                "reason": "High search volume among garage and workshop organizers.",
+                "highlight": "Industrial-grade wall-mounted organizer rack with 8 heavy-duty slots sized for pliers, wire strippers, and crimping tools.",
+                "tags": ["pliers rack", "tool organizer", "workshop", "garage", "wall mount", "pegboard", "bambulab", "functional print"]
+            },
+            {
+                "template": "gridfinity",
+                "title": "Gridfinity 3x3 Large Deep Hardware Organizer Bin (6U)",
+                "params": {"grid_x": 3, "grid_y": 3, "units_z": 6},
+                "category": "Household/Organization",
+                "reason": "Large 3x3 bins are high-demand for larger workshop tools and hardware.",
+                "highlight": "Extra-roomy 3x3 Gridfinity modular bin (42mm deep) for organizing multimeters, power tool batteries, and bulky hardware.",
+                "tags": ["gridfinity", "3x3 bin", "hardware storage", "modular organizer", "workshop", "bambulab", "functional print"]
+            },
+            {
+                "template": "gridfinity",
+                "title": "Gridfinity 1x4 Extra-Long Caliper & Ruler Tray (3U Shallow)",
+                "params": {"grid_x": 1, "grid_y": 4, "units_z": 3},
+                "category": "Household/Organization",
+                "reason": "Engineers and makers look for long shallow trays for precision measuring tools.",
+                "highlight": "Extended 1x4 shallow Gridfinity tray (21mm height) specifically proportioned for vernier calipers, tweezers, and stainless steel rulers.",
+                "tags": ["gridfinity", "caliper tray", "long bin", "precision tools", "workshop", "bambulab", "functional print"]
+            },
+            {
+                "template": "phone_stand",
+                "title": "Compact iPad Mini & Kindle Reading Stand (85mm, 65° Angle)",
+                "params": {"width": 85.0, "depth": 90.0, "height": 75.0},
+                "category": "Household/Office",
+                "reason": "Kindle and e-reader accessories see constant high download velocity.",
+                "highlight": "Tuned 65° viewing stand engineered for comfortable hands-free Kindle reading and iPad Mini recipe display in the kitchen.",
+                "tags": ["kindle stand", "ipad mini", "ereader", "reading stand", "tablet dock", "bambulab", "functional print"]
+            },
+            {
+                "template": "cable_holder",
+                "title": "Heavy 8-Slot Cable Management Comb for Desk Edge (Ethernet & Power)",
+                "params": {"slots": 8, "slot_width": 6.0},
+                "category": "Household/Office",
+                "reason": "Power users with dual monitors need 8-slot heavy cable organizers.",
+                "highlight": "High-capacity 8-slot desk cable guide designed for thick braided HDMI 2.1, DisplayPort, and heavy shielded power cables.",
+                "tags": ["cable comb", "8 slot clip", "wire organizer", "battlestation", "desk setup", "bambulab", "functional print"]
+            },
+            {
+                "template": "cable_holder",
+                "title": "Compact 3-Slot Bedside Nightstand Cord Keeper (Braided Lightning & USB-C)",
+                "params": {"slots": 3, "slot_width": 3.8},
+                "category": "Household/Office",
+                "reason": "Preventing charging cords from falling behind the bed is an evergreen pain point.",
+                "highlight": "Low-profile 3-slot cord keeper designed to clamp to bedside tables and keep phone and watch charging cords accessible.",
+                "tags": ["cord keeper", "nightstand cable", "usb-c clip", "charging cable", "desk organizer", "bambulab", "functional print"]
+            },
+            {
+                "template": "modular_bracket",
+                "title": "Reinforced 100mm Heavy-Duty 90° Workbench Shelf Bracket (8mm Wall)",
+                "params": {"length": 100.0, "width": 40.0, "thickness": 8.0},
+                "category": "Household/Tools",
+                "reason": "High-load functional prints build strong community reputation and likes.",
+                "highlight": "Heavy-duty 100mm structural corner bracket with thick 8mm walls and central reinforcing triangular gusset. Supports up to 25kg in PETG.",
+                "tags": ["structural bracket", "heavy duty", "shelf bracket", "workbench", "garage", "bambulab", "functional print"]
+            },
+            {
+                "template": "modular_bracket",
+                "title": "Compact 50mm Structural Corner Gusset Joint for 2020 Aluminum Extrusion",
+                "params": {"length": 50.0, "width": 25.0, "thickness": 5.0},
+                "category": "Household/Tools",
+                "reason": "3D printer builders and CNC makers constantly search for 2020 corner brackets.",
+                "highlight": "Precision 50mm corner bracket designed to reinforce 2020 T-slot aluminum extrusion frames on custom 3D printers and CNC rigs.",
+                "tags": ["2020 extrusion", "corner bracket", "t-slot", "3d printer frame", "cnc", "bambulab", "functional print"]
+            },
+            {
+                "template": "bambu_poop_chute",
+                "title": "Bambu Lab X1-Carbon & P1S Magnetic Poop Chute with Extended Catch Basket",
+                "params": {"width": 75.0, "depth": 95.0, "height": 105.0},
+                "category": "3D Printer Accessories",
+                "reason": "Top trending 3D printer accessory on MakerWorld with high search velocity.",
+                "highlight": "High-capacity magnetic purge deflector for Bambu Lab X1C and P1S. Angled slide directs hot purge filament cleanly away from the printer.",
+                "tags": ["bambulab", "p1s", "x1c", "poop chute", "purge deflector", "printer upgrade", "functional print"]
+            },
+            {
+                "template": "sd_usb_caddy",
+                "title": "Pro Photographer Desktop Flash Card Station (6x SD, 4x USB-A, 4x USB-C)",
+                "params": {"width": 75.0, "depth": 60.0, "height": 26.0},
+                "category": "Household/Office",
+                "reason": "Photographers and drone videographers search for multi-format media card caddies.",
+                "highlight": "Organized desktop media station holding 6 full-sized SD cards, 4 USB-A thumb drives, and 4 compact USB-C flash sticks in a stable block.",
+                "tags": ["sd card caddy", "photographer desk", "memory card organizer", "usb-c holder", "camera gear", "bambulab", "functional print"]
+            },
+            {
+                "template": "headphone_hanger",
+                "title": "Ergonomic Wide-Band Audio Headphone & Headset Desk Clamp Hanger (45mm)",
+                "params": {"mount_len": 50.0, "arm_drop": 70.0, "cradle_len": 70.0, "width": 45.0},
+                "category": "Household/Office",
+                "reason": "Audiophiles want wide 45mm cradles that don't dent memory foam headbands.",
+                "highlight": "Extra-wide 45mm curved headband cradle hook. Protects expensive headphones from compression marks while keeping desks clear.",
+                "tags": ["headphone hanger", "audiophile", "headset stand", "desk setup", "under desk", "bambulab", "functional print"]
+            },
+            {
+                "template": "hex_wrench_caddy",
+                "title": "Bambu Lab Comprehensive Maintenance Tool Station with Scraper & Cutter Slot",
+                "params": {"width": 85.0, "depth": 48.0, "height": 38.0},
+                "category": "3D Printer Accessories",
+                "reason": "Bambu printer owners love having all tools in one compact station next to the printer.",
+                "highlight": "Complete printer toolkit organizer holding Bambu Lab hex keys, flush cutters, nozzle cleaning needles, and spare hotend assemblies.",
+                "tags": ["bambulab", "tool station", "hex wrench", "maintenance kit", "p1s", "a1 mini", "x1c", "printer upgrade"]
+            },
+            {
+                "template": "ptfe_filament_clip",
+                "title": "Quad PTFE Tube Guide Bracket for Bambu AMS Multi-Filament Buffer",
+                "params": {"length": 45.0, "width": 18.0, "height": 15.0},
+                "category": "3D Printer Accessories",
+                "reason": "AMS users need 4-tube alignment clips to eliminate friction and feed errors.",
+                "highlight": "Precision 4-channel PTFE bowden tube separator clip. Keeps all 4 filament paths perfectly aligned from the AMS unit to the printer inlet.",
+                "tags": ["ams", "bambulab", "ptfe guide", "filament clip", "ams buffer", "multi color", "printer upgrade"]
+            },
+            {
+                "template": "tool_mount",
+                "title": "Compact 5-Slot Precision Screwdriver & Tweezers Bench Organizer (140mm)",
+                "params": {"width": 140.0, "height": 38.0, "depth": 28.0, "num_slots": 5, "slot_diameter": 9.0},
+                "category": "Household/Tools",
+                "reason": "Electronics repair and soldering stations require slim precision tool holders.",
+                "highlight": "Benchtop or wall-mounted precision organizer with 5 narrow slots designed for iFixit-style drivers, ceramic tweezers, and dental picks.",
+                "tags": ["precision screwdriver", "electronics repair", "workbench", "tool holder", "soldering", "bambulab", "functional print"]
+            },
+            {
+                "template": "pen_holder",
+                "title": "Hexagonal Geometry Desk Pen Pot & Ruler Organizer Cup (65mm)",
+                "params": {"diameter": 65.0, "height": 105.0, "slots": 1, "wall_thickness": 3.0},
+                "category": "Household/Office",
+                "reason": "Geometric pen pots have strong visual appeal on MakerWorld showcase feeds.",
+                "highlight": "Modern geometric desk pen cup with 3mm thick structural walls and weighted base. Holds up to 15 pens, pencils, and steel rulers.",
+                "tags": ["geometric pen pot", "pencil holder", "desk organizer", "stationery", "architect desk", "bambulab", "functional print"]
+            },
+            {
+                "template": "controller_stand",
+                "title": "Retro Gaming Console & 8BitDo Wireless Controller Display Stand (105mm)",
+                "params": {"width": 105.0, "depth": 72.0, "height": 58.0},
+                "category": "Household/Office",
+                "reason": "Retro gaming community is massive on MakerWorld.",
+                "highlight": "Compact showcase stand contoured for 8BitDo Pro 2, SN30 Pro, and classic retro gamepad controllers with angled viewing stance.",
+                "tags": ["8bitdo", "retro gaming", "controller stand", "gamepad dock", "desk setup", "bambulab", "functional print"]
             }
         ]
 
